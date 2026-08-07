@@ -1,12 +1,25 @@
 import Product from "../models/Product.js";
 
-// Get All Products
+
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({})
+      .limit(limit)
+      .skip(skip);
+    const total = await Product.countDocuments();
 
     res.status(200).json({
       success: true,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      totalProducts: total,
       data: products,
     });
   } catch (error) {
@@ -16,6 +29,7 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+
 
 // Get Product By ID
 export const getProductById = async (req, res) => {

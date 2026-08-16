@@ -1,9 +1,9 @@
 import express from "express";
-import Product from "../model/products.model.js";
+import Product from "../models/products.model.js";
 const router = express.Router();
 
 
-
+//create
 router.post('/create', async (req, res)=>{
     const data = req.body;
 
@@ -21,6 +21,28 @@ router.post('/create', async (req, res)=>{
     })
 })
 
+//all
+
+router.get("/all", async (req, res) => {
+  try {
+    const products = await Product.find({});
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    res.status(200).json({
+      message: "Products found successfully",
+      products,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+//pageination
 router.get("/all/:pageNumber", async (req, res)=>{
     try{
 
@@ -55,35 +77,56 @@ router.get("/all/:pageNumber", async (req, res)=>{
     }
 })
 
-router.get("/:id", async (req, res)=>{
-    try{
-        const id = req.params.id;
+router.get("/products/:id", async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) return res.status(404).json({ message: "Product not found" });
+  res.json({ product });
+});
 
-        const product = await Product.find({
-            _id:id
-        })
+router.put("/products/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-        if(!product){
-            return res.status(404).json({
-                message:"Product Not Found"
-            })
-        }
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      req.body, // fields to update (name, price, description, etc.)
+      {
+        new: true,        // return the updated product
+        runValidators: true, // validate against schema
+      }
+    );
 
-        res.status(200).json({
-            message:"Product Found",
-            product
-        })
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
     }
-    catch(err){
-        res.status(500).json({
-            message:err.message
-        })
+
+    return res.status(200).json({
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+// ✅ Delete product
+router.delete("/products/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product not found" });
     }
-})
 
-//update product 
-
-
-// delete product
+    return res.status(200).json({
+      message: "Product deleted successfully",
+      product: deletedProduct,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
 
 export default router;

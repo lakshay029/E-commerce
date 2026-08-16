@@ -1,5 +1,5 @@
 import express from 'express';
-import User from '../model/user.model.js';
+import User from '../models/user.model.js';
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get("/", (req, res)=>{
 })
 
 
-router.post('/signup', async (req, res)=>{
+router.post('/Signup', async (req, res)=>{
     try{
     const data = req.body;
     console.log(data);
@@ -59,41 +59,30 @@ catch(err){
 }
 })
 
-router.post("/login", async (req, res)=>{
+router.post("/login", async (req, res) => {
+  try {
+    const email = req.body.email.toLowerCase();
+    const password = req.body.password;
 
-    try{
-    // user must be existing in users array
-    const {email, password} =req.body;
-    
-    // const user = users.find((user)=>user.email===email);
-    let user =await User.find({email:email});
-    user = user[0];
-
-
-    if(!user){
-        res.status(404).send("User not found");
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-
-    // if(user.password !== password){
-    //     res.status(401).send("Incorrect Password");
-    // }
-    const isMatch = await user.comparePassword(password);
-    if(!isMatch){
-        return res.status(401).json({
-            message:"Password incorrect"
-        })
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Incorrect Password" });
     }
 
-    res.status(200).json({
-        message:"Login Successfull",
-        user:user
-    })
-}
-catch(err){
-    res.status(500).send("Internal Server Error")
-}
-})
+    return res.status(200).json({
+      message: "Login successful",
+      user,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 router.patch('/changePassword/:id', async (req, res)=>{
         let { id } = req.params;

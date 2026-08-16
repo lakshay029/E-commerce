@@ -2,8 +2,8 @@ import express from 'express';
 const router = express.Router();
 
 
-import Order from '../model/order.model.js';
-import Product from '../model/products.model.js';
+import Order from '../models/order.model.js';
+import Product from '../models/products.model.js';
 
 router.get('/', async (req, res)=>{
     try{

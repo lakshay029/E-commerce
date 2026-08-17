@@ -36,7 +36,7 @@ const HomePage = () => {
             Discover amazing products at unbeatable prices!
           </p>
           <div className="flex justify-center gap-4">
-            <button
+            {/* <button
               onClick={() => navigate("/login")}
               className="bg-white text-blue-600 px-6 py-2 rounded-md font-semibold hover:bg-gray-200 transition"
             >
@@ -46,8 +46,8 @@ const HomePage = () => {
               onClick={() => navigate("/signup")}
               className="bg-yellow-400 text-gray-900 px-6 py-2 rounded-md font-semibold hover:bg-yellow-500 transition"
             >
-              Sign Up
-            </button>
+              Sign Up */}
+            {/* </button> */}
           </div>
         </div>
       </header>

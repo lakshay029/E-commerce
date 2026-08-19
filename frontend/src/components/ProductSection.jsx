@@ -594,7 +594,7 @@ const ProductSection = () => {
                 ">
 
                   <img
-                    src={prod.images?.[0]}
+                    src={prod.Images?.[0]}
                     alt={prod.name}
                     className="
                       w-full
